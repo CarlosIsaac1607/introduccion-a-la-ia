@@ -1,0 +1,107 @@
+import os
+import json
+
+# Archivo donde se guardarán los registros
+ARCHIVO = "usuarios.json"
+
+# Cargar datos si el archivo existe
+def cargar_datos():
+    if os.path.exists(ARCHIVO):
+        with open(ARCHIVO, "r") as f:
+            return json.load(f)
+    else:
+        return []
+
+# Guardar datos en archivo
+def guardar_datos(usuarios):
+    with open(ARCHIVO, "w") as f:
+        json.dump(usuarios, f, indent=4)
+    print("Datos guardados correctamente.\n")
+
+# Registrar un nuevo usuario
+def registrar_usuario(usuarios):
+    print("\n--- Registrar Usuario ---")
+    nombre = input("Nombre: ")
+    edad = input("Edad: ")
+    correo = input("Correo: ")
+
+    usuario = {
+        "nombre": nombre,
+        "edad": edad,
+        "correo": correo
+    }
+
+    usuarios.append(usuario)
+    guardar_datos(usuarios)
+    print("Usuario registrado con éxito.\n")
+
+# Mostrar todos los usuarios
+def mostrar_usuarios(usuarios):
+    print("\n--- Lista de Usuarios ---")
+    if not usuarios:
+        print("No hay usuarios registrados.\n")
+        return
+
+    for i, u in enumerate(usuarios, start=1):
+        print(f"{i}. Nombre: {u['nombre']}, Edad: {u['edad']}, Correo: {u['correo']}")
+    print()
+
+# Buscar usuario por nombre
+def buscar_usuario(usuarios):
+    print("\n--- Buscar Usuario ---")
+    nombre = input("Nombre a buscar: ")
+
+    encontrados = [u for u in usuarios if nombre.lower() in u["nombre"].lower()]
+
+    if encontrados:
+        print("\nUsuarios encontrados:")
+        for u in encontrados:
+            print(f"Nombre: {u['nombre']}, Edad: {u['edad']}, Correo: {u['correo']}")
+    else:
+        print("No se encontró ningún usuario con ese nombre.\n")
+
+# Eliminar usuario por nombre
+def eliminar_usuario(usuarios):
+    print("\n--- Eliminar Usuario ---")
+    nombre = input("Nombre del usuario a eliminar: ")
+
+    for u in usuarios:
+        if u["nombre"].lower() == nombre.lower():
+            usuarios.remove(u)
+            guardar_datos(usuarios)
+            print("Usuario eliminado correctamente.\n")
+            return
+
+    print("No se encontró el usuario.\n")
+
+# Menú principal
+def menu():
+    usuarios = cargar_datos()
+
+    while True:
+        print("\n===== SISTEMA DE REGISTRO =====")
+        print("1. Registrar usuario")
+        print("2. Mostrar usuarios")
+        print("3. Buscar usuario")
+        print("4. Eliminar usuario")
+        print("5. Salir")
+
+        opcion = input("Opción: ")
+
+        if opcion == "1":
+            registrar_usuario(usuarios)
+        elif opcion == "2":
+            mostrar_usuarios(usuarios)
+        elif opcion == "3":
+            buscar_usuario(usuarios)
+        elif opcion == "4":
+            eliminar_usuario(usuarios)
+        elif opcion == "5":
+            print("Saliendo...")
+            break
+        else:
+            print("Opción no válida. Intenta de nuevo.\n")
+
+
+# Ejecutar el menú
+menu()
